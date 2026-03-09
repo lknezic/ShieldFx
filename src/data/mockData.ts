@@ -129,6 +129,10 @@ export const mockAccounts: Account[] = [
       { id: "a3", timestamp: "2025-12-29 08:00:00", actionType: "WARNING", performedBy: "admin@tradexmastery.com", violationId: "v5", violationRule: "Reverse Hedging", details: "Warning email sent for reverse hedging violation.", emailSent: true, emailRecipient: "fx.master91@gmail.com" },
       { id: "a4", timestamp: "2025-10-20 11:30:00", actionType: "WARNING", performedBy: "admin@tradexmastery.com", violationId: "v6", violationRule: "Shared IP Address", details: "Warning email sent for shared IP pattern.", emailSent: true, emailRecipient: "fx.master91@gmail.com" },
       { id: "a5", timestamp: "2025-12-30 16:00:00", actionType: "NOTE", performedBy: "admin@tradexmastery.com", details: "Trader responded to warning — claims using VPN. Escalating for further review." },
+    warningCount: 2,
+    warningHistory: [
+      { warningNumber: 1, sentDate: "Oct 20, 2025", tagsAtWarningTime: [{ rule: "Shared IP Address" }] },
+      { warningNumber: 2, sentDate: "Dec 29, 2025", tagsAtWarningTime: [{ rule: "Reverse Hedging" }] },
     ],
   },
   {

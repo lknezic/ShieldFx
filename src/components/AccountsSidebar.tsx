@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Search, Filter, FolderOpen, AlertTriangle, ChevronDown, Inbox, Clock, CreditCard, X, CheckSquare, Square, Ban } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Account, FolderType, RiskLevel } from "@/types/account";
+import { Account, RiskLevel, SystemFolderId } from "@/types/account";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { getViolationIcon, getViolationShortLabel, RISK_BADGE_STYLES, SEVERITY_BADGE_CLASSES } from "@/lib/violations";

@@ -58,7 +58,6 @@ export const mockAccounts: Account[] = [
     connectedAccounts: [
       { id: "D#1641107", email: "archibongibok@gmail.com", type: "Two Step - Phase 1", status: "ACTIVE", date: "Aug 28, 2025" },
     ],
-    detectionRules: "Suspicious",
     violations: [
       { id: "v1", rule: "Copy Trading", description: "Account matched 2 copy trading instances with accounts gklen2000@gmail.com and anyudef7@gmail.com. Trades opened within 60-second windows with matching symbols and directions.", severity: "MEDIUM", detectedDate: "Jan 2, 2026", status: "OPEN" },
       { id: "v2", rule: "Shared IP Address", description: "Account accessed from 39 shared IP addresses out of 41 total. Multiple IPs shared with 18-21 other trading accounts from Lagos, Nigeria.", severity: "HIGH", detectedDate: "Nov 3, 2025", status: "OPEN" },

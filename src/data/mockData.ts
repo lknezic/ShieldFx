@@ -172,7 +172,6 @@ export const mockAccounts: Account[] = [
       { id: "d5", type: "DESKTOP", label: "chrome-mac-xyz789", os: "macOS 15", startDate: "Aug 15, 2025", endDate: "Jan 5, 2026", activities: 200 },
     ],
     connectedAccounts: [],
-    detectionRules: "Suspicious",
     violations: [
       { id: "v8", rule: "Copy Trading", description: "1 trade matched with sarah.trades@gmail.com within 30-second window.", severity: "LOW", detectedDate: "Jan 5, 2026", status: "OPEN" },
       { id: "v9", rule: "Shared IP Address", description: "Primary IP shared with 3 accounts. Likely office or co-working space.", severity: "MEDIUM", detectedDate: "Sep 1, 2025", status: "OPEN" },

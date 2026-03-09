@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Search, Filter, FolderOpen, AlertTriangle, ChevronDown, Inbox, Clock, CreditCard, X, CheckSquare, Square, Zap, Globe, Smartphone, ArrowLeftRight, Ban } from "lucide-react";
+import { Search, Filter, FolderOpen, AlertTriangle, ChevronDown, Inbox, Clock, CreditCard, X, CheckSquare, Square, Ban } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Account, FolderType, RiskLevel } from "@/types/account";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { getViolationIcon, getViolationShortLabel, RISK_BADGE_STYLES, SEVERITY_BADGE_CLASSES } from "@/lib/violations";
 
 interface AccountsSidebarProps {
   accounts: Account[];
@@ -21,29 +22,6 @@ const folders: { id: FolderType; label: string; icon: React.ReactNode }[] = [
   { id: "later", label: "Later", icon: <Clock className="h-4 w-4" /> },
   { id: "suspicious", label: "Suspicious", icon: <AlertTriangle className="h-4 w-4" /> },
 ];
-
-const RISK_BADGE_STYLES: Record<RiskLevel, string> = {
-  CRITICAL: "bg-red-600 text-white",
-  HIGH: "bg-orange-600 text-white",
-  MEDIUM: "bg-yellow-600 text-black",
-  LOW: "bg-emerald-600 text-white",
-};
-
-const VIOLATION_ICONS: Record<string, React.ReactNode> = {
-  "Copy Trading": <Zap className="h-2.5 w-2.5" />,
-  "Reverse Hedging": <ArrowLeftRight className="h-2.5 w-2.5" />,
-  "Shared IP Address": <Globe className="h-2.5 w-2.5" />,
-  "Device Anomaly": <Smartphone className="h-2.5 w-2.5" />,
-  "Device Sharing": <Smartphone className="h-2.5 w-2.5" />,
-};
-
-const VIOLATION_SHORT: Record<string, string> = {
-  "Copy Trading": "Copy",
-  "Reverse Hedging": "Hedge",
-  "Shared IP Address": "IP",
-  "Device Anomaly": "Device",
-  "Device Sharing": "Device",
-};
 
 export function AccountsSidebar({ accounts, selectedAccount, onSelectAccount, onClose }: AccountsSidebarProps) {
   const [activeFolder, setActiveFolder] = useState<FolderType>("suspicious");
@@ -288,8 +266,8 @@ export function AccountsSidebar({ accounts, selectedAccount, onSelectAccount, on
                               : "bg-muted text-muted-foreground border-border"
                           )}
                         >
-                          {VIOLATION_ICONS[rule]}
-                          {VIOLATION_SHORT[rule] || rule.split(" ")[0]}
+                          {getViolationIcon(rule, "sm")}
+                          {getViolationShortLabel(rule)}
                         </span>
                       );
                     })

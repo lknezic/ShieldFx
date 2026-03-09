@@ -122,10 +122,12 @@ export interface Account {
   };
   ipAddresses: IPAddress[];
   devices: Device[];
-  connectedAccounts: { id: string; email: string; type: string; status: string; date: string }[];
+  connectedAccounts: ConnectedAccount[];
   detectionRules: string;
   violations: Violation[];
   auditTrail: AuditEntry[];
+  warningCount: number;
+  warningHistory: WarningHistoryEntry[];
 }
 
 export type FolderType = "all" | "suspicious" | "new" | "later" | "uncategorized" | "pay_later";

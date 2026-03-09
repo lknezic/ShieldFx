@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Account, Violation } from "@/types/account";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { toast } from "sonner";
 
 interface NotifyTabProps {
   account: Account;
+  initialMode?: "WARNING" | "SUSPENSION";
 }
 
 type NotifyMode = "WARNING" | "SUSPENSION";
@@ -111,9 +112,14 @@ Risk Management Team`,
   };
 }
 
-export function NotifyTab({ account }: NotifyTabProps) {
+export function NotifyTab({ account, initialMode = "WARNING" }: NotifyTabProps) {
   const openViolations = account.violations.filter((v) => v.status === "OPEN");
-  const [mode, setMode] = useState<NotifyMode>("WARNING");
+  const [mode, setMode] = useState<NotifyMode>(initialMode);
+
+  // Sync mode when parent changes it (e.g., clicking Warning vs Suspend in verdict banner)
+  useEffect(() => {
+    setMode(initialMode);
+  }, [initialMode]);
   const [selectedViolation, setSelectedViolation] = useState<Violation | null>(
     openViolations.length > 0 ? openViolations[0] : null
   );

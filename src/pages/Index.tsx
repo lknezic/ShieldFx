@@ -13,7 +13,7 @@ const Index = () => {
       <TopNav />
       <div className="flex flex-1 min-h-0">
         {/* Left panel */}
-        <div className="w-[460px] min-w-[400px] flex-shrink-0 overflow-y-auto scrollbar-thin border-r border-border">
+        <div className="w-[420px] min-w-[380px] flex-shrink-0 overflow-y-auto scrollbar-thin border-r border-border">
           <AccountsSidebar
             accounts={mockAccounts}
             selectedAccount={selectedAccount}

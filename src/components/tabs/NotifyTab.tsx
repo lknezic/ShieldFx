@@ -3,14 +3,41 @@ import { Account, Violation } from "@/types/account";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Mail, Send, AlertTriangle, CheckCircle, Edit3 } from "lucide-react";
+import { Mail, Send, AlertTriangle, CheckCircle, Edit3, Ban } from "lucide-react";
 import { toast } from "sonner";
 
 interface NotifyTabProps {
   account: Account;
 }
 
-function getEmailTemplate(account: Account, violation: Violation): string {
+type NotifyMode = "WARNING" | "SUSPENSION";
+
+function getEmailTemplate(account: Account, violation: Violation, mode: NotifyMode): { subject: string; body: string } {
+  const violationSummary = account.violations
+    .filter((v) => v.status === "OPEN")
+    .map((v) => `• ${v.rule}: ${v.description}`)
+    .join("\n");
+
+  if (mode === "SUSPENSION") {
+    return {
+      subject: `[Suspension] Account ${account.externalId} — Rule Violation`,
+      body: `Dear ${account.name},
+
+Your trading account ${account.externalId} has been suspended effective immediately due to confirmed rule violations:
+
+${violationSummary}
+
+As per our Terms of Service, any profits generated through prohibited trading practices are subject to forfeiture.
+
+Total P&L from suspicious activity: +$${account.copyDetection.totalPnl.toFixed(2)}
+
+You may appeal this decision within 14 days by responding to this email with supporting evidence.
+
+Regards,
+Risk Management Team`,
+    };
+  }
+
   const templates: Record<string, string> = {
     "Copy Trading": `Dear ${account.name},
 
@@ -49,9 +76,29 @@ Failure to respond may result in a temporary account restriction pending further
 
 Regards,
 Risk Management Team`,
+
+    "Reverse Hedging": `Dear ${account.name},
+
+Our risk detection system has identified reverse hedging patterns on your account (${account.externalId}).
+
+Details:
+${violation.description}
+
+Reverse hedging — opening opposing positions across linked accounts within narrow time windows — is explicitly prohibited under our Terms of Service, Section 4.3 – Prohibited Hedging Strategies.
+
+Required Actions:
+1. Close all opposing positions immediately
+2. Provide a written explanation within 48 hours
+
+This is a serious violation that may result in immediate suspension if not addressed.
+
+Regards,
+Risk Management Team`,
   };
 
-  return templates[violation.rule] || `Dear ${account.name},
+  return {
+    subject: `[Warning] ${violation.rule} Violation Detected – Account ${account.externalId}`,
+    body: templates[violation.rule] || `Dear ${account.name},
 
 Our risk management system has detected a potential violation on your account (${account.externalId}).
 
@@ -60,34 +107,49 @@ ${violation.description}
 Please review your trading activity and respond to this notice within 48 hours.
 
 Regards,
-Risk Management Team`;
+Risk Management Team`,
+  };
 }
 
 export function NotifyTab({ account }: NotifyTabProps) {
+  const openViolations = account.violations.filter((v) => v.status === "OPEN");
+  const [mode, setMode] = useState<NotifyMode>("WARNING");
   const [selectedViolation, setSelectedViolation] = useState<Violation | null>(
-    account.violations.length > 0 ? account.violations[0] : null
-  );
-  const [emailBody, setEmailBody] = useState(
-    account.violations.length > 0 ? getEmailTemplate(account, account.violations[0]) : ""
+    openViolations.length > 0 ? openViolations[0] : null
   );
   const [isEditing, setIsEditing] = useState(false);
-  const [subject, setSubject] = useState(
-    account.violations.length > 0
-      ? `[Action Required] ${account.violations[0].rule} Violation Detected – Account ${account.externalId}`
-      : ""
-  );
+
+  const template = selectedViolation
+    ? getEmailTemplate(account, selectedViolation, mode)
+    : { subject: "", body: "" };
+
+  const [subject, setSubject] = useState(template.subject);
+  const [emailBody, setEmailBody] = useState(template.body);
 
   const handleSelectViolation = (v: Violation) => {
     setSelectedViolation(v);
-    setEmailBody(getEmailTemplate(account, v));
-    setSubject(`[Action Required] ${v.rule} Violation Detected – Account ${account.externalId}`);
+    const t = getEmailTemplate(account, v, mode);
+    setSubject(t.subject);
+    setEmailBody(t.body);
     setIsEditing(false);
   };
 
+  const handleModeChange = (newMode: NotifyMode) => {
+    setMode(newMode);
+    if (selectedViolation) {
+      const t = getEmailTemplate(account, selectedViolation, newMode);
+      setSubject(t.subject);
+      setEmailBody(t.body);
+    }
+  };
+
   const handleSend = () => {
-    toast.success(`Email notification sent to ${account.email}`, {
-      description: `Violation: ${selectedViolation?.rule}`,
-    });
+    toast.success(
+      mode === "WARNING"
+        ? `Warning email sent to ${account.email}`
+        : `Suspension notice sent to ${account.email}`,
+      { description: `Violation: ${selectedViolation?.rule}` }
+    );
   };
 
   if (account.violations.length === 0) {
@@ -104,13 +166,41 @@ export function NotifyTab({ account }: NotifyTabProps) {
 
   return (
     <div className="space-y-4">
-      {/* Active Violations */}
+      <div className="flex gap-2">
+        <button
+          onClick={() => handleModeChange("WARNING")}
+          className={cn(
+            "flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border-2 transition-all text-sm font-semibold",
+            mode === "WARNING"
+              ? "border-warning bg-warning/10 text-warning"
+              : "border-border text-muted-foreground hover:border-warning/30"
+          )}
+        >
+          <AlertTriangle className="h-4 w-4" />
+          Send Warning
+          <span className="text-[10px] font-normal opacity-70">Account stays active</span>
+        </button>
+        <button
+          onClick={() => handleModeChange("SUSPENSION")}
+          className={cn(
+            "flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border-2 transition-all text-sm font-semibold",
+            mode === "SUSPENSION"
+              ? "border-destructive bg-destructive/10 text-destructive"
+              : "border-border text-muted-foreground hover:border-destructive/30"
+          )}
+        >
+          <Ban className="h-4 w-4" />
+          Send Suspension
+          <span className="text-[10px] font-normal opacity-70">Account frozen</span>
+        </button>
+      </div>
+
       <div className="border border-border rounded-lg overflow-hidden">
         <div className="px-4 py-3 bg-secondary/30 flex items-center gap-2">
           <AlertTriangle className="h-4 w-4 text-warning" />
-          <h3 className="text-sm font-semibold text-foreground">Active Violations</h3>
+          <h3 className="text-sm font-semibold text-foreground">Select Violation</h3>
           <Badge className="bg-destructive/20 text-destructive border-destructive/30 text-[10px] ml-auto">
-            {account.violations.filter((v) => v.status === "OPEN").length} OPEN
+            {openViolations.length} OPEN
           </Badge>
         </div>
         <div className="divide-y divide-border">
@@ -119,13 +209,13 @@ export function NotifyTab({ account }: NotifyTabProps) {
               key={v.id}
               onClick={() => handleSelectViolation(v)}
               className={cn(
-                "w-full p-4 text-left transition-colors",
+                "w-full p-3 text-left transition-colors",
                 selectedViolation?.id === v.id ? "bg-primary/10" : "hover:bg-accent"
               )}
             >
               <div className="flex items-center justify-between mb-1">
                 <span className="text-sm font-semibold text-foreground">{v.rule}</span>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   <Badge className={cn(
                     "text-[10px]",
                     v.severity === "HIGH" || v.severity === "CRITICAL"
@@ -148,20 +238,20 @@ export function NotifyTab({ account }: NotifyTabProps) {
                   </Badge>
                 </div>
               </div>
-              <p className="text-xs text-muted-foreground line-clamp-2">{v.description}</p>
-              <p className="text-[10px] text-muted-foreground mt-1">Detected: {v.detectedDate}</p>
+              <p className="text-xs text-muted-foreground line-clamp-1">{v.description}</p>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Email Composer */}
       {selectedViolation && (
         <div className="border border-border rounded-lg overflow-hidden">
           <div className="px-4 py-3 bg-secondary/30 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Mail className="h-4 w-4 text-primary" />
-              <h3 className="text-sm font-semibold text-foreground">Send Violation Notice</h3>
+              <h3 className="text-sm font-semibold text-foreground">
+                {mode === "WARNING" ? "Warning" : "Suspension"} Email
+              </h3>
             </div>
             <Button
               variant="ghost"
@@ -174,13 +264,11 @@ export function NotifyTab({ account }: NotifyTabProps) {
             </Button>
           </div>
           <div className="p-4 space-y-3">
-            {/* To */}
             <div className="flex items-center gap-2">
               <span className="text-xs text-muted-foreground w-16">To:</span>
               <span className="text-sm text-foreground">{account.email}</span>
             </div>
 
-            {/* Subject */}
             <div className="flex items-center gap-2">
               <span className="text-xs text-muted-foreground w-16">Subject:</span>
               {isEditing ? (
@@ -194,30 +282,48 @@ export function NotifyTab({ account }: NotifyTabProps) {
               )}
             </div>
 
-            {/* Body */}
             <div className="border-t border-border pt-3">
               {isEditing ? (
                 <textarea
                   value={emailBody}
                   onChange={(e) => setEmailBody(e.target.value)}
-                  rows={16}
-                  className="w-full text-sm text-foreground bg-secondary/50 border border-border rounded p-3 focus:outline-none focus:ring-1 focus:ring-ring resize-none scrollbar-thin font-mono"
+                  rows={14}
+                  className="w-full text-sm text-foreground bg-secondary/50 border border-border rounded-md p-3 focus:outline-none focus:ring-1 focus:ring-ring resize-none scrollbar-thin font-mono"
                 />
               ) : (
-                <pre className="text-sm text-foreground whitespace-pre-wrap font-sans leading-relaxed bg-secondary/20 rounded-lg p-4 max-h-96 overflow-y-auto scrollbar-thin">
+                <pre className="text-sm text-foreground whitespace-pre-wrap font-sans leading-relaxed bg-secondary/20 rounded-lg p-4 max-h-80 overflow-y-auto scrollbar-thin">
                   {emailBody}
                 </pre>
               )}
             </div>
 
-            {/* Actions */}
+            <div className={cn(
+              "rounded-lg border p-3",
+              mode === "WARNING"
+                ? "bg-warning/5 border-warning/20"
+                : "bg-destructive/5 border-destructive/20"
+            )}>
+              <p className={cn("text-xs", mode === "WARNING" ? "text-warning" : "text-destructive")}>
+                {mode === "WARNING"
+                  ? "This will send a formal warning and log it to the audit trail. The trader's account will remain active."
+                  : "This will suspend the account immediately, freeze all open positions, and notify the trader. Profits may be subject to forfeiture. This action can be reversed by an admin."}
+              </p>
+            </div>
+
             <div className="flex items-center justify-between pt-2 border-t border-border">
               <p className="text-[10px] text-muted-foreground">
-                This email is pre-filled based on the detected violation. You can edit it before sending.
+                Email pre-filled based on violation type. Edit before sending if needed.
               </p>
-              <Button onClick={handleSend} size="sm" className="gap-1.5">
+              <Button
+                onClick={handleSend}
+                size="sm"
+                className={cn(
+                  "gap-1.5",
+                  mode === "SUSPENSION" && "bg-destructive hover:bg-destructive/90"
+                )}
+              >
                 <Send className="h-3.5 w-3.5" />
-                Send Notification
+                {mode === "WARNING" ? "Send Warning" : "Confirm Suspension"}
               </Button>
             </div>
           </div>

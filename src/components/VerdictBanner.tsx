@@ -1,8 +1,14 @@
-import { Account, RiskLevel } from "@/types/account";
+import { Account } from "@/types/account";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, ShieldAlert, Ban, Zap, Globe, Smartphone, ArrowLeftRight } from "lucide-react";
+import { AlertTriangle, ShieldAlert, Ban } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  getViolationIcon,
+  SEVERITY_PILL_CLASSES,
+  RISK_BADGE_STYLES,
+  RISK_BORDER_STYLES,
+} from "@/lib/violations";
 
 interface VerdictBannerProps {
   account: Account;
@@ -10,30 +16,8 @@ interface VerdictBannerProps {
   onSuspend: () => void;
 }
 
-const RISK_STYLES: Record<RiskLevel, { bg: string; border: string; text: string; glow: string }> = {
-  CRITICAL: { bg: "bg-red-600", border: "border-red-500", text: "text-red-400", glow: "shadow-[0_0_20px_rgba(239,68,68,0.15)]" },
-  HIGH: { bg: "bg-orange-600", border: "border-orange-500", text: "text-orange-400", glow: "shadow-[0_0_20px_rgba(249,115,22,0.15)]" },
-  MEDIUM: { bg: "bg-yellow-600", border: "border-yellow-500", text: "text-yellow-400", glow: "shadow-[0_0_15px_rgba(234,179,8,0.1)]" },
-  LOW: { bg: "bg-emerald-600", border: "border-emerald-500", text: "text-emerald-400", glow: "" },
-};
-
-const VIOLATION_ICONS: Record<string, React.ReactNode> = {
-  "Copy Trading": <Zap className="h-3 w-3" />,
-  "Reverse Hedging": <ArrowLeftRight className="h-3 w-3" />,
-  "Shared IP Address": <Globe className="h-3 w-3" />,
-  "Device Anomaly": <Smartphone className="h-3 w-3" />,
-  "Device Sharing": <Smartphone className="h-3 w-3" />,
-};
-
-const SEVERITY_COLORS: Record<string, string> = {
-  CRITICAL: "bg-red-500/10 text-red-400 border-red-500/30",
-  HIGH: "bg-orange-500/10 text-orange-400 border-orange-500/30",
-  MEDIUM: "bg-yellow-500/10 text-yellow-400 border-yellow-500/30",
-  LOW: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
-};
-
 export function VerdictBanner({ account, onWarning, onSuspend }: VerdictBannerProps) {
-  const risk = RISK_STYLES[account.riskLevel];
+  const risk = RISK_BORDER_STYLES[account.riskLevel];
   const openViolations = account.violations.filter((v) => v.status === "OPEN").length;
   const hasViolations = account.violations.length > 0;
 
@@ -45,7 +29,6 @@ export function VerdictBanner({ account, onWarning, onSuspend }: VerdictBannerPr
       "bg-card border border-border"
     )}>
       <div className="flex items-start justify-between gap-4">
-        {/* Left: account info + violations */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2.5 mb-2">
             <span className="text-lg font-bold text-foreground font-mono">{account.externalId}</span>
@@ -68,7 +51,6 @@ export function VerdictBanner({ account, onWarning, onSuspend }: VerdictBannerPr
             {account.name} · {account.email} · Created {account.createdDate}
           </p>
 
-          {/* Violation pills */}
           {hasViolations ? (
             <div className="flex flex-wrap gap-1.5">
               {account.violations.map((v) => (
@@ -76,10 +58,10 @@ export function VerdictBanner({ account, onWarning, onSuspend }: VerdictBannerPr
                   key={v.id}
                   className={cn(
                     "inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full border",
-                    SEVERITY_COLORS[v.severity]
+                    SEVERITY_PILL_CLASSES[v.severity]
                   )}
                 >
-                  {VIOLATION_ICONS[v.rule] || <AlertTriangle className="h-3 w-3" />}
+                  {getViolationIcon(v.rule, "sm")}
                   {v.rule}
                   {v.status === "NOTIFIED" && (
                     <span className="text-[9px] opacity-70 ml-0.5">· Notified</span>
@@ -95,9 +77,8 @@ export function VerdictBanner({ account, onWarning, onSuspend }: VerdictBannerPr
           )}
         </div>
 
-        {/* Right: risk level + actions */}
         <div className="flex flex-col items-end gap-2 flex-shrink-0">
-          <Badge className={cn("text-xs font-bold px-3 py-1 tracking-wide", risk.bg, "text-white border-0")}>
+          <Badge className={cn("text-xs font-bold px-3 py-1 tracking-wide text-white border-0", RISK_BADGE_STYLES[account.riskLevel])}>
             {account.riskLevel} RISK
           </Badge>
 

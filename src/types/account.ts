@@ -56,6 +56,24 @@ export type RiskLevel = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
 
 export type ActionType = "WARNING" | "SUSPENSION" | "REVIEW" | "CLEARED" | "NOTE";
 
+export interface WarningHistoryEntry {
+  warningNumber: number;
+  sentDate: string;
+  tagsAtWarningTime: { rule: string }[];
+}
+
+export interface ConnectedAccount {
+  id: string;
+  email: string;
+  type: string;
+  status: string;
+  date: string;
+  warningCount?: number;
+  suspended?: boolean;
+  suspendedDate?: string;
+  suspendedReason?: string;
+}
+
 export interface AuditEntry {
   id: string;
   timestamp: string;
@@ -104,10 +122,12 @@ export interface Account {
   };
   ipAddresses: IPAddress[];
   devices: Device[];
-  connectedAccounts: { id: string; email: string; type: string; status: string; date: string }[];
+  connectedAccounts: ConnectedAccount[];
   detectionRules: string;
   violations: Violation[];
   auditTrail: AuditEntry[];
+  warningCount: number;
+  warningHistory: WarningHistoryEntry[];
 }
 
 export type FolderType = "all" | "suspicious" | "new" | "later" | "uncategorized" | "pay_later";

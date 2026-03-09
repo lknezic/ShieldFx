@@ -67,6 +67,8 @@ export const mockAccounts: Account[] = [
       { id: "a1", timestamp: "2026-01-05 14:23:00", actionType: "REVIEW", performedBy: "admin@tradexmastery.com", details: "Account flagged for review after copy trading detection triggered.", violationId: "v1", violationRule: "Copy Trading" },
       { id: "a2", timestamp: "2025-11-10 09:15:00", actionType: "NOTE", performedBy: "admin@tradexmastery.com", details: "IP sharing pattern consistent with ISP-level NAT in Lagos region. Monitoring but not actionable alone." },
     ],
+    warningCount: 0,
+    warningHistory: [],
   },
   {
     id: "2",
@@ -129,6 +131,11 @@ export const mockAccounts: Account[] = [
       { id: "a4", timestamp: "2025-10-20 11:30:00", actionType: "WARNING", performedBy: "admin@tradexmastery.com", violationId: "v6", violationRule: "Shared IP Address", details: "Warning email sent for shared IP pattern.", emailSent: true, emailRecipient: "fx.master91@gmail.com" },
       { id: "a5", timestamp: "2025-12-30 16:00:00", actionType: "NOTE", performedBy: "admin@tradexmastery.com", details: "Trader responded to warning — claims using VPN. Escalating for further review." },
     ],
+    warningCount: 2,
+    warningHistory: [
+      { warningNumber: 1, sentDate: "Oct 20, 2025", tagsAtWarningTime: [{ rule: "Shared IP Address" }] },
+      { warningNumber: 2, sentDate: "Dec 29, 2025", tagsAtWarningTime: [{ rule: "Reverse Hedging" }] },
+    ],
   },
   {
     id: "3",
@@ -170,6 +177,8 @@ export const mockAccounts: Account[] = [
       { id: "v9", rule: "Shared IP Address", description: "Primary IP shared with 3 accounts. Likely office or co-working space.", severity: "MEDIUM", detectedDate: "Sep 1, 2025", status: "OPEN" },
     ],
     auditTrail: [],
+    warningCount: 0,
+    warningHistory: [],
   },
   {
     id: "4",
@@ -212,6 +221,8 @@ export const mockAccounts: Account[] = [
       { id: "v10", rule: "Device Anomaly", description: "5 devices used in 2 months. 1 device shared with another account.", severity: "LOW", detectedDate: "Jan 6, 2026", status: "OPEN" },
     ],
     auditTrail: [],
+    warningCount: 0,
+    warningHistory: [],
   },
   {
     id: "5",
@@ -248,5 +259,7 @@ export const mockAccounts: Account[] = [
     detectionRules: "Standard",
     violations: [],
     auditTrail: [],
+    warningCount: 0,
+    warningHistory: [],
   },
 ];

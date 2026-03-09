@@ -56,6 +56,24 @@ export type RiskLevel = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
 
 export type ActionType = "WARNING" | "SUSPENSION" | "REVIEW" | "CLEARED" | "NOTE";
 
+export interface WarningHistoryEntry {
+  warningNumber: number;
+  sentDate: string;
+  tagsAtWarningTime: { rule: string }[];
+}
+
+export interface ConnectedAccount {
+  id: string;
+  email: string;
+  type: string;
+  status: string;
+  date: string;
+  warningCount?: number;
+  suspended?: boolean;
+  suspendedDate?: string;
+  suspendedReason?: string;
+}
+
 export interface AuditEntry {
   id: string;
   timestamp: string;

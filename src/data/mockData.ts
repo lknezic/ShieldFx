@@ -258,7 +258,7 @@ export const mockAccounts: Account[] = [
       { id: "d11", type: "DESKTOP", label: "chrome-win-abc123", os: "windows 11", startDate: "Jan 15, 2026", endDate: "Mar 8, 2026", activities: 120 },
     ],
     connectedAccounts: [],
-    detectionRules: "Standard",
+    
     violations: [],
     auditTrail: [],
     warningCount: 0,

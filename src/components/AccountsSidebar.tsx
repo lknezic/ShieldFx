@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Search, Filter, FolderOpen, AlertTriangle, ChevronDown, Inbox, Clock, CreditCard, X, CheckSquare, Square, Ban } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Account, FolderType, RiskLevel } from "@/types/account";
+import { Account, RiskLevel, SystemFolderId } from "@/types/account";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { getViolationIcon, getViolationShortLabel, RISK_BADGE_STYLES, SEVERITY_BADGE_CLASSES } from "@/lib/violations";
@@ -14,17 +14,17 @@ interface AccountsSidebarProps {
   onClose?: () => void;
 }
 
-const folders: { id: FolderType; label: string; icon: React.ReactNode }[] = [
+const folders: { id: "all" | SystemFolderId; label: string; icon: React.ReactNode }[] = [
   { id: "all", label: "All Accounts", icon: <FolderOpen className="h-4 w-4" /> },
-  { id: "uncategorized", label: "Uncategorized", icon: <Inbox className="h-4 w-4" /> },
-  { id: "pay_later", label: "Pay Later", icon: <CreditCard className="h-4 w-4" /> },
   { id: "new", label: "New", icon: <FolderOpen className="h-4 w-4" /> },
-  { id: "later", label: "Later", icon: <Clock className="h-4 w-4" /> },
   { id: "suspicious", label: "Suspicious", icon: <AlertTriangle className="h-4 w-4" /> },
+  { id: "warned", label: "Warned", icon: <AlertTriangle className="h-4 w-4" /> },
+  { id: "suspended", label: "Suspended", icon: <Ban className="h-4 w-4" /> },
+  { id: "cleared", label: "Cleared", icon: <CheckSquare className="h-4 w-4" /> },
 ];
 
 export function AccountsSidebar({ accounts, selectedAccount, onSelectAccount, onClose }: AccountsSidebarProps) {
-  const [activeFolder, setActiveFolder] = useState<FolderType>("suspicious");
+  const [activeFolder, setActiveFolder] = useState<"all" | SystemFolderId>("suspicious");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkMode, setBulkMode] = useState(false);
@@ -32,11 +32,11 @@ export function AccountsSidebar({ accounts, selectedAccount, onSelectAccount, on
 
   const folderCounts = folders.map((f) => ({
     ...f,
-    count: f.id === "all" ? accounts.length : accounts.filter((a) => a.folder === f.id).length,
+    count: f.id === "all" ? accounts.length : accounts.filter((a) => a.folderId === f.id).length,
   }));
 
   const filteredAccounts = accounts
-    .filter((a) => activeFolder === "all" || a.folder === activeFolder)
+    .filter((a) => activeFolder === "all" || a.folderId === activeFolder)
     .filter((a) =>
       searchQuery === "" ||
       a.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

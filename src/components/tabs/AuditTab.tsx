@@ -16,6 +16,11 @@ const ACTION_CONFIG: Record<ActionType, { icon: React.ReactNode; color: string; 
   REVIEW: { icon: <Eye className="h-3.5 w-3.5" />, color: "text-primary", label: "Reviewed" },
   CLEARED: { icon: <CheckCircle className="h-3.5 w-3.5" />, color: "text-success", label: "Cleared" },
   NOTE: { icon: <MessageSquare className="h-3.5 w-3.5" />, color: "text-muted-foreground", label: "Note Added" },
+  FOLDER_MOVE: { icon: <Eye className="h-3.5 w-3.5" />, color: "text-primary", label: "Folder Changed" },
+  RETRIGGER: { icon: <AlertTriangle className="h-3.5 w-3.5" />, color: "text-warning", label: "Re-triggered" },
+  TAG_SNOOZED: { icon: <Eye className="h-3.5 w-3.5" />, color: "text-muted-foreground", label: "Tag Snoozed" },
+  TAG_UNSNOOZED: { icon: <Eye className="h-3.5 w-3.5" />, color: "text-muted-foreground", label: "Tag Unsnoozed" },
+  AUTO_SUSPEND: { icon: <Ban className="h-3.5 w-3.5" />, color: "text-destructive", label: "Auto-Suspended" },
 };
 
 function AuditEntryRow({ entry }: { entry: AuditEntry }) {

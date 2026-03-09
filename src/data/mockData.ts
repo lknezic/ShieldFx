@@ -135,8 +135,8 @@ export const mockAccounts: Account[] = [
     ],
     warningCount: 2,
     warningHistory: [
-      { warningNumber: 1, sentDate: "Oct 20, 2025", tagsAtWarningTime: [{ rule: "Shared IP Address" }] },
-      { warningNumber: 2, sentDate: "Dec 29, 2025", tagsAtWarningTime: [{ rule: "Reverse Hedging" }] },
+      { id: "w1", warningNumber: 1, sentDate: "Oct 20, 2025", sentBy: "admin@tradexmastery.com", violationIds: ["v6"], tagsAtWarningTime: [{ rule: "Shared IP Address", severity: "HIGH" }], equityAtWarningTime: 98420.11, profitAtWarningTime: 8240.33, generatedEmailBody: "", sentEmailBody: "", wasEdited: false, emailSubject: "", emailRecipient: "fx.master91@gmail.com" },
+      { id: "w2", warningNumber: 2, sentDate: "Dec 29, 2025", sentBy: "admin@tradexmastery.com", violationIds: ["v5"], tagsAtWarningTime: [{ rule: "Reverse Hedging", severity: "CRITICAL" }], equityAtWarningTime: 98420.11, profitAtWarningTime: 8240.33, generatedEmailBody: "", sentEmailBody: "", wasEdited: false, emailSubject: "", emailRecipient: "fx.master91@gmail.com" },
     ],
   },
   {

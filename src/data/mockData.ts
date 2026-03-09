@@ -254,6 +254,7 @@ export const mockAccounts: Account[] = [
     connectedAccounts: [],
     detectionRules: "Standard",
     violations: [],
-    auditTrail: [],
+    warningCount: 0,
+    warningHistory: [],
   },
 ];

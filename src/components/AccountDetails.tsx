@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Account } from "@/types/account";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -17,10 +17,24 @@ interface AccountDetailsProps {
 
 export function AccountDetails({ account, onClose }: AccountDetailsProps) {
   const [activeTab, setActiveTab] = useState("overview");
+  const [notifyMode, setNotifyMode] = useState<"WARNING" | "SUSPENSION">("WARNING");
   const openViolations = account.violations.filter((v) => v.status === "OPEN").length;
 
-  const handleWarning = () => setActiveTab("notify");
-  const handleSuspend = () => setActiveTab("notify");
+  // Reset to Overview when switching accounts
+  useEffect(() => {
+    setActiveTab("overview");
+    setNotifyMode("WARNING");
+  }, [account.id]);
+
+  const handleWarning = () => {
+    setNotifyMode("WARNING");
+    setActiveTab("notify");
+  };
+
+  const handleSuspend = () => {
+    setNotifyMode("SUSPENSION");
+    setActiveTab("notify");
+  };
 
   return (
     <div className="flex h-full flex-col bg-background">
@@ -73,7 +87,7 @@ export function AccountDetails({ account, onClose }: AccountDetailsProps) {
           <TabsContent value="overview" className="mt-0"><OverviewTab account={account} /></TabsContent>
           <TabsContent value="trades" className="mt-0"><TradesTab account={account} /></TabsContent>
           <TabsContent value="fingerprint" className="mt-0"><FingerprintTab account={account} /></TabsContent>
-          <TabsContent value="notify" className="mt-0"><NotifyTab account={account} /></TabsContent>
+          <TabsContent value="notify" className="mt-0"><NotifyTab account={account} initialMode={notifyMode} /></TabsContent>
           <TabsContent value="audit" className="mt-0"><AuditTab account={account} /></TabsContent>
         </Tabs>
       </div>

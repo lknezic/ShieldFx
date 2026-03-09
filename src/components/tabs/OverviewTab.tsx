@@ -2,39 +2,30 @@ import { useState } from "react";
 import { Account, Violation } from "@/types/account";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { ChevronDown, Zap, Globe, Smartphone, ArrowLeftRight, AlertTriangle, TrendingUp, Users, Info } from "lucide-react";
+import { ChevronDown, AlertTriangle, TrendingUp, Users, Info } from "lucide-react";
+import {
+  getViolationIcon,
+  SEVERITY_BORDER_LEFT,
+  SEVERITY_BADGE_CLASSES,
+  STATUS_BADGE_CLASSES,
+} from "@/lib/violations";
 
 interface OverviewTabProps {
   account: Account;
 }
 
-const VIOLATION_ICONS: Record<string, React.ReactNode> = {
-  "Copy Trading": <Zap className="h-4 w-4" />,
-  "Reverse Hedging": <ArrowLeftRight className="h-4 w-4" />,
-  "Shared IP Address": <Globe className="h-4 w-4" />,
-  "Device Anomaly": <Smartphone className="h-4 w-4" />,
-  "Device Sharing": <Smartphone className="h-4 w-4" />,
-};
-
-const SEVERITY_BORDER: Record<string, string> = {
-  CRITICAL: "border-l-red-500",
-  HIGH: "border-l-orange-500",
-  MEDIUM: "border-l-yellow-500",
-  LOW: "border-l-emerald-500",
-};
-
 function EvidenceCard({ violation, account }: { violation: Violation; account: Account }) {
   const [expanded, setExpanded] = useState(violation.severity === "HIGH" || violation.severity === "CRITICAL");
 
   return (
-    <div className={cn("border border-border rounded-lg overflow-hidden border-l-4", SEVERITY_BORDER[violation.severity])}>
+    <div className={cn("border border-border rounded-lg overflow-hidden border-l-4", SEVERITY_BORDER_LEFT[violation.severity])}>
       <button
         onClick={() => setExpanded(!expanded)}
         className="w-full flex items-center justify-between p-3.5 text-left hover:bg-accent/50 transition-colors"
       >
         <div className="flex items-center gap-2.5">
           <span className="text-muted-foreground">
-            {VIOLATION_ICONS[violation.rule] || <AlertTriangle className="h-4 w-4" />}
+            {getViolationIcon(violation.rule)}
           </span>
           <div>
             <span className="text-sm font-semibold text-foreground">{violation.rule}</span>
@@ -42,24 +33,10 @@ function EvidenceCard({ violation, account }: { violation: Violation; account: A
           </div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-          <Badge className={cn(
-            "text-[10px]",
-            violation.severity === "CRITICAL" || violation.severity === "HIGH"
-              ? "bg-destructive/20 text-destructive border-destructive/30"
-              : violation.severity === "MEDIUM"
-              ? "bg-warning/20 text-warning border-warning/30"
-              : "bg-muted text-muted-foreground"
-          )}>
+          <Badge className={cn("text-[10px]", SEVERITY_BADGE_CLASSES[violation.severity])}>
             {violation.severity}
           </Badge>
-          <Badge className={cn(
-            "text-[10px]",
-            violation.status === "OPEN"
-              ? "bg-destructive/20 text-destructive border-destructive/30"
-              : violation.status === "NOTIFIED"
-              ? "bg-warning/20 text-warning border-warning/30"
-              : "bg-success/20 text-success border-success/30"
-          )}>
+          <Badge className={cn("text-[10px]", STATUS_BADGE_CLASSES[violation.status])}>
             {violation.status}
           </Badge>
           <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform", expanded && "rotate-180")} />

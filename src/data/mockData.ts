@@ -120,7 +120,6 @@ export const mockAccounts: Account[] = [
     connectedAccounts: [
       { id: "D#1698110", email: "fx.master91@gmail.com", type: "Two Step - Phase 2", status: "ACTIVE", date: "Sep 12, 2025" },
     ],
-    detectionRules: "Suspicious",
     violations: [
       { id: "v4", rule: "Copy Trading", description: "8 of 93 trades matched across 5 different accounts within 60-second windows. P&L from copied trades: +$412.55.", severity: "HIGH", detectedDate: "Jan 3, 2026", status: "OPEN" },
       { id: "v5", rule: "Reverse Hedging", description: "Detected opposing positions opened within 180-second windows on XAUUSD.X across linked accounts.", severity: "CRITICAL", detectedDate: "Dec 28, 2025", status: "NOTIFIED" },

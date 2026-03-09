@@ -43,6 +43,31 @@ export interface Device {
   sharedAccounts?: number;
 }
 
+export interface Violation {
+  id: string;
+  rule: string;
+  description: string;
+  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  detectedDate: string;
+  status: "OPEN" | "NOTIFIED" | "RESOLVED";
+}
+
+export type RiskLevel = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+
+export type ActionType = "WARNING" | "SUSPENSION" | "REVIEW" | "CLEARED" | "NOTE";
+
+export interface AuditEntry {
+  id: string;
+  timestamp: string;
+  actionType: ActionType;
+  performedBy: string;
+  violationId?: string;
+  violationRule?: string;
+  details: string;
+  emailSent?: boolean;
+  emailRecipient?: string;
+}
+
 export interface Account {
   id: string;
   externalId: string;
@@ -50,7 +75,7 @@ export interface Account {
   name: string;
   accountType: "LIVE" | "DEMO";
   status: "ACTIVE" | "INACTIVE" | "SUSPENDED";
-  folder: "suspicious" | "new" | "later" | "uncategorized" | "pay_later";
+  folder: FolderType;
   createdDate: string;
   platform: string;
   tags: string[];
@@ -64,13 +89,14 @@ export interface Account {
   winningTrades: number;
   losingTrades: number;
   totalTrades: number;
+  riskLevel: RiskLevel;
   trades: Trade[];
   copyDetection: {
     suspiciousTrades: number;
     totalTrades: number;
     copyInstances: number;
     totalPnl: number;
-    riskLevel: "LOW" | "MEDIUM" | "HIGH";
+    riskLevel: RiskLevel;
     matches: CopyMatch[];
   };
   reverseHedging: {
@@ -81,15 +107,7 @@ export interface Account {
   connectedAccounts: { id: string; email: string; type: string; status: string; date: string }[];
   detectionRules: string;
   violations: Violation[];
-}
-
-export interface Violation {
-  id: string;
-  rule: string;
-  description: string;
-  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
-  detectedDate: string;
-  status: "OPEN" | "NOTIFIED" | "RESOLVED";
+  auditTrail: AuditEntry[];
 }
 
 export type FolderType = "all" | "suspicious" | "new" | "later" | "uncategorized" | "pay_later";

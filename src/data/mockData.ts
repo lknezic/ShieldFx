@@ -217,7 +217,7 @@ export const mockAccounts: Account[] = [
       { id: "d10", type: "MOBILE", label: "samsung-eee555", os: "android 144", startDate: "Jan 2, 2026", endDate: "Jan 6, 2026", activities: 5 },
     ],
     connectedAccounts: [],
-    detectionRules: "Suspicious",
+    
     violations: [
       { id: "v10", rule: "Device Anomaly", description: "5 devices used in 2 months. 1 device shared with another account.", severity: "LOW", detectedDate: "Jan 6, 2026", status: "OPEN" },
     ],

@@ -217,7 +217,8 @@ export const mockAccounts: Account[] = [
     violations: [
       { id: "v10", rule: "Device Anomaly", description: "5 devices used in 2 months. 1 device shared with another account.", severity: "LOW", detectedDate: "Jan 6, 2026", status: "OPEN" },
     ],
-    auditTrail: [],
+    warningCount: 0,
+    warningHistory: [],
   },
   {
     id: "5",

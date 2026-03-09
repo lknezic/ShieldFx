@@ -36,7 +36,7 @@ export function AccountsSidebar({ accounts, selectedAccount, onSelectAccount, on
   }));
 
   const filteredAccounts = accounts
-    .filter((a) => activeFolder === "all" || a.folder === activeFolder)
+    .filter((a) => activeFolder === "all" || a.folderId === activeFolder)
     .filter((a) =>
       searchQuery === "" ||
       a.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

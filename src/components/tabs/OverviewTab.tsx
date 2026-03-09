@@ -308,10 +308,10 @@ export function OverviewTab({ account }: OverviewTabProps) {
                 <p className="text-sm text-foreground">{account.createdDate}</p>
               </div>
             </div>
-            {account.tags.length > 0 && (
+            {account.userTags.length > 0 && (
               <div className="mt-3">
                 <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Tags</p>
-                <div className="flex gap-1">{account.tags.map((t) => <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>)}</div>
+                <div className="flex gap-1">{account.userTags.map((t) => <Badge key={t} variant="secondary" className="text-xs">{t}</Badge>)}</div>
               </div>
             )}
           </CollapsibleSection>

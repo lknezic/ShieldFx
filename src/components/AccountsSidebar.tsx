@@ -24,7 +24,7 @@ const folders: { id: "all" | SystemFolderId; label: string; icon: React.ReactNod
 ];
 
 export function AccountsSidebar({ accounts, selectedAccount, onSelectAccount, onClose }: AccountsSidebarProps) {
-  const [activeFolder, setActiveFolder] = useState<FolderType>("suspicious");
+  const [activeFolder, setActiveFolder] = useState<"all" | SystemFolderId>("suspicious");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkMode, setBulkMode] = useState(false);

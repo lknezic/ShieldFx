@@ -32,7 +32,7 @@ export function AccountsSidebar({ accounts, selectedAccount, onSelectAccount, on
 
   const folderCounts = folders.map((f) => ({
     ...f,
-    count: f.id === "all" ? accounts.length : accounts.filter((a) => a.folder === f.id).length,
+    count: f.id === "all" ? accounts.length : accounts.filter((a) => a.folderId === f.id).length,
   }));
 
   const filteredAccounts = accounts

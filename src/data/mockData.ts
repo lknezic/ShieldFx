@@ -66,6 +66,7 @@ export const mockAccounts: Account[] = [
     auditTrail: [
       { id: "a1", timestamp: "2026-01-05 14:23:00", actionType: "REVIEW", performedBy: "admin@tradexmastery.com", details: "Account flagged for review after copy trading detection triggered.", violationId: "v1", violationRule: "Copy Trading" },
       { id: "a2", timestamp: "2025-11-10 09:15:00", actionType: "NOTE", performedBy: "admin@tradexmastery.com", details: "IP sharing pattern consistent with ISP-level NAT in Lagos region. Monitoring but not actionable alone." },
+    ],
     warningCount: 0,
     warningHistory: [],
   },

@@ -14,13 +14,13 @@ interface AccountsSidebarProps {
   onClose?: () => void;
 }
 
-const folders: { id: FolderType; label: string; icon: React.ReactNode }[] = [
+const folders: { id: "all" | SystemFolderId; label: string; icon: React.ReactNode }[] = [
   { id: "all", label: "All Accounts", icon: <FolderOpen className="h-4 w-4" /> },
-  { id: "uncategorized", label: "Uncategorized", icon: <Inbox className="h-4 w-4" /> },
-  { id: "pay_later", label: "Pay Later", icon: <CreditCard className="h-4 w-4" /> },
   { id: "new", label: "New", icon: <FolderOpen className="h-4 w-4" /> },
-  { id: "later", label: "Later", icon: <Clock className="h-4 w-4" /> },
   { id: "suspicious", label: "Suspicious", icon: <AlertTriangle className="h-4 w-4" /> },
+  { id: "warned", label: "Warned", icon: <AlertTriangle className="h-4 w-4" /> },
+  { id: "suspended", label: "Suspended", icon: <Ban className="h-4 w-4" /> },
+  { id: "cleared", label: "Cleared", icon: <CheckSquare className="h-4 w-4" /> },
 ];
 
 export function AccountsSidebar({ accounts, selectedAccount, onSelectAccount, onClose }: AccountsSidebarProps) {
